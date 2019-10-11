@@ -9,13 +9,39 @@ namespace MyWebServer
 {
     public class URL : IUrl
     {
-        public string RawUrl => throw new NotImplementedException();
 
-        public string Path => throw new NotImplementedException();
+        public URL(string path)
+        {
+            this.Parameter = new Dictionary<string, string>();
+            if (path != null)
+            {
+                string[] temp = path.Split('?');
 
-        public IDictionary<string, string> Parameter => throw new NotImplementedException();
+                this.RawUrl = path;
+                this.Path = temp[0];
+                if (temp.Length > 1)
+                {
+                    foreach (string parameter in temp[1].Split('&'))
+                    {
+                        string[] t = parameter.Split('=');
+                        if (t.Length > 1)
+                        {
+                            string varName = t[0];
+                            string varValue = t[1];
+                            this.Parameter.Add(varName, varValue);
+                        }
+                    }
+                }
+            }
+        }
 
-        public int ParameterCount => throw new NotImplementedException();
+        public string RawUrl { get; }
+
+        public string Path { get; }
+
+        public IDictionary<string, string> Parameter { get; }
+
+        public int ParameterCount { get { return Parameter.Count; } }
 
         public string[] Segments => throw new NotImplementedException();
 
