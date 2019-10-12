@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MyWebServer
 {
@@ -15,10 +13,16 @@ namespace MyWebServer
             this.Parameter = new Dictionary<string, string>();
             if (path != null)
             {
-                string[] temp = path.Split('?');
-
                 this.RawUrl = path;
-                this.Path = temp[0];
+
+                string[] temp = path.Split('#');
+                if (temp.Length == 2)
+                {
+                    Fragment = temp[1];
+                }
+
+                temp = temp[0].Split('?');
+
                 if (temp.Length > 1)
                 {
                     foreach (string parameter in temp[1].Split('&'))
@@ -32,6 +36,41 @@ namespace MyWebServer
                         }
                     }
                 }
+
+                this.Path = temp[0];
+
+                temp = temp[0].Split('/');
+
+                List<string> tempSegments = new List<string>();
+
+                if (temp.Length > 1)
+                {
+                    foreach (string fragment in temp)
+                    {
+                        if (!string.IsNullOrEmpty(fragment))
+                        {
+                            tempSegments.Add(fragment);
+                        }
+                    }
+                    this.Segments = new string[tempSegments.Count()];
+
+                    if (tempSegments.Count() > 0)
+                    {
+                        int i = 0;
+                        foreach (string fragment in tempSegments)
+                        {
+                            this.Segments[i] = fragment;
+                            i++;
+                        }
+                    }
+                }
+                else
+                {
+                    this.Segments = new string[1];
+                    this.Segments[0] = temp[0];
+                }
+
+
             }
         }
 
@@ -43,12 +82,12 @@ namespace MyWebServer
 
         public int ParameterCount { get { return Parameter.Count; } }
 
-        public string[] Segments => throw new NotImplementedException();
+        public string[] Segments { get; }
 
         public string FileName => throw new NotImplementedException();
 
         public string Extension => throw new NotImplementedException();
 
-        public string Fragment => throw new NotImplementedException();
+        public string Fragment { get; }
     }
 }

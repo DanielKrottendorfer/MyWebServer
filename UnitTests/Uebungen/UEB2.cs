@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using BIF.SWE1.Interfaces;
+using MyWebServer;
 
 namespace Uebungen
 {
@@ -14,12 +15,12 @@ namespace Uebungen
 
         public IUrl GetUrl(string path)
         {
-            throw new NotImplementedException();
+            return new URL(path);
         }
 
         public IRequest GetRequest(System.IO.Stream network)
         {
-            throw new NotImplementedException();
+            return new Request(network);
         }
 
         public IResponse GetResponse()
