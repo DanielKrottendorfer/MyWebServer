@@ -15,7 +15,7 @@ namespace Uebungen
 
         public IUrl GetUrl(string path)
         {
-            return new URL(path);
+            return new Url(path);
         }
 
         public IRequest GetRequest(System.IO.Stream network)
@@ -25,7 +25,7 @@ namespace Uebungen
 
         public IResponse GetResponse()
         {
-            throw new NotImplementedException();
+            return new Response();
         }
     }
 }

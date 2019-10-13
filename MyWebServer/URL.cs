@@ -5,10 +5,10 @@ using System.Linq;
 
 namespace MyWebServer
 {
-    public class URL : IUrl
+    public class Url : IUrl
     {
 
-        public URL(string path)
+        public Url(string path)
         {
             this.Parameter = new Dictionary<string, string>();
             if (path != null)

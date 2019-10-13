@@ -17,7 +17,7 @@ namespace Uebungen
 
         public IUrl GetUrl(string path)
         {
-            return new URL(path);
+            return new Url(path);
         }
     }
 }

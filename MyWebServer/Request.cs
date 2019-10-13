@@ -28,7 +28,7 @@ namespace MyWebServer
                 if( l>2 )
                 {
                     this.Method = splitStr[0].ToUpper();
-                    this.Url = new URL(splitStr[1]);
+                    this.Url = new Url(splitStr[1]);
                 }
             }
 
