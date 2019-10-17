@@ -52,6 +52,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Request.cs" />
     <Compile Include="Response.cs" />
+    <Compile Include="TestPlugin.cs" />
     <Compile Include="Url.cs" />
   </ItemGroup>
   <ItemGroup>
