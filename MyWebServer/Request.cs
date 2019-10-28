@@ -12,6 +12,8 @@ namespace MyWebServer
     {
         public Request(System.IO.Stream network)
         {
+            this.Headers = new Dictionary<string, string>();
+
             this.ContentStream = new MemoryStream();
             network.CopyTo(this.ContentStream);
             network.Seek(0, SeekOrigin.Begin);
@@ -29,6 +31,27 @@ namespace MyWebServer
                 {
                     this.Method = splitStr[0].ToUpper();
                     this.Url = new Url(splitStr[1]);
+                }
+            }
+
+
+
+            while (!string.IsNullOrEmpty((temp = rStream.ReadLine())))
+            {
+                string[] splitStr = temp.Split(':');
+                if (splitStr.Length == 2)
+                {
+                    string key = splitStr[0].ToLower().Trim();
+                    string val = splitStr[1].Trim();
+
+                    if (this.Headers.ContainsKey(key))
+                    {
+                        this.Headers[key] = val;
+                    }
+                    else
+                    {
+                        this.Headers.Add(key, val);
+                    }
                 }
             }
 
@@ -51,11 +74,14 @@ namespace MyWebServer
 
         public IUrl Url { get; }
 
-        public IDictionary<string, string> Headers => throw new NotImplementedException();
+        public IDictionary<string, string> Headers { get; }
 
-        public string UserAgent => throw new NotImplementedException();
+        public string UserAgent { get { return this.Headers["user-agent"]; } }
 
-        public int HeaderCount => throw new NotImplementedException();
+        public int HeaderCount { get{
+                return this.Headers.Count(); 
+            }
+         }
 
         public int ContentLength => throw new NotImplementedException();
 

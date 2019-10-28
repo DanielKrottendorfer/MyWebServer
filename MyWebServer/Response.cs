@@ -17,9 +17,13 @@ namespace MyWebServer
         }
         public IDictionary<string, string> Headers { get; }
 
-        public int ContentLength => throw new NotImplementedException();
+        public int ContentLength {
+            get {
+                return _content.Length;
+            }
+        }
 
-        public string ContentType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string ContentType { get; set; }
         public int _StatusCode;
         public int StatusCode {
             set { this._StatusCode = value; }
@@ -46,14 +50,38 @@ namespace MyWebServer
                         s = " Internal Server Error";
                         break;
                     default:
-                        s= " default";
+                        s = " default";
                         break;
                 }
                 return this.StatusCode.ToString() + s;
             }
         }
 
-        public string ServerHeader { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        private string _serverHeader = "BIF-SWE1-Server";
+        public string ServerHeader {
+            get {
+                return _serverHeader;
+            }
+            set{
+                if (!string.IsNullOrEmpty(value))
+                {
+                    string[] temp = value.Split('_');
+                    
+                    if(temp.Length == 2)
+                    { 
+                        string s1 = temp[0];
+                        s1 = char.ToUpper(s1[0]) + s1.Substring(1);
+                        string s2 = temp[1];
+
+                        this._serverHeader = s1 + ": " + value;
+                    }
+                    else
+                    {
+                        this._serverHeader = value;
+                    }
+                }
+            } 
+        }
 
         public void AddHeader(string header, string value)
         {
@@ -72,22 +100,56 @@ namespace MyWebServer
 
         public void Send(Stream network)
         {
-            throw new NotImplementedException();
+            string temp = "HTTP/1.1 " + this.Status + "\n \n";
+            var ba = UTF8Encoding.UTF8.GetBytes(temp);
+            network.Write(ba, 0, ba.Length);
+            if (_content != null)
+            {
+                network.Write(this._content, 0, this._content.Length);
+            }
+            else if (ContentType != null)
+            {
+                throw new Exception();
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(ServerHeader))
+                {
+                    temp = ServerHeader + "\n";
+                    ba = UTF8Encoding.UTF8.GetBytes(temp);
+                    network.Write(ba, 0, ba.Length);
+
+                }
+                if (Headers.Count > 0)
+                {
+                    foreach (var x in this.Headers)
+                    {
+                        temp = x.Key + ": " + x.Value + "\n";
+                        ba = UTF8Encoding.UTF8.GetBytes(temp);
+                        network.Write(ba, 0, ba.Length);
+                    }
+                }
+            }
         }
 
+        private byte[] _content;
         public void SetContent(string content)
         {
-            throw new NotImplementedException();
+            _content = UTF8Encoding.UTF8.GetBytes(content);
         }
 
         public void SetContent(byte[] content)
         {
-            throw new NotImplementedException();
+            _content = content;
         }
 
         public void SetContent(Stream stream)
         {
-            throw new NotImplementedException();
+            using (MemoryStream ms = new MemoryStream())
+            {
+                stream.CopyTo(ms);
+                _content = ms.ToArray();
+            }
         }
     }
 }

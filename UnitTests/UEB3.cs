@@ -279,7 +279,8 @@ namespace BIF.SWE1.UnitTests
                     bool header_end_found = false;
                     for (int i = 0; i < 1000 && !sr.EndOfStream; i++)
                     {
-                        if (sr.ReadLine().Trim() == "")
+                        string t = sr.ReadLine().Trim();
+                        if (t == "")
                         {
                             header_end_found = true;
                             break;
