@@ -61,7 +61,7 @@ namespace Main
                 }
 
                 StreamWriter sw = new StreamWriter(stream);
-                var body = "<form action='' method='get'>First Value: <input type='text' name='firstValue'><br>Second Value: <input type='text' name='secondValue'><br><button type='submit'>absenden</button></div></form>";
+                var body = "<form action='' method='get'>First Value: <input type='text' name='firstValue'><br>Second Value: <input type='text' name='secondValue'><br><button type='submit' formmethod='post'>absenden</button></form>";
                 sw.WriteLine("HTTP/1.1 200 OK");
                 sw.WriteLine("connection: close");
                 sw.WriteLine("content-type: text/html");
@@ -69,12 +69,6 @@ namespace Main
                 sw.WriteLine();
                 sw.Write(body);
                 sw.Flush();
-                Console.WriteLine("flushed");
-                StreamReader sd = new StreamReader(stream);
-                Console.WriteLine("waiting...");
-                string test = sd.ReadLine();
-                Console.WriteLine("received");
-                Console.Write(test);
                 s.Close();
             }
         }
