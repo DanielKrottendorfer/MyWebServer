@@ -113,13 +113,6 @@ namespace MyWebServer
             }
             else
             {
-                if (!string.IsNullOrEmpty(ServerHeader))
-                {
-                    temp = ServerHeader + "\n";
-                    ba = UTF8Encoding.UTF8.GetBytes(temp);
-                    network.Write(ba, 0, ba.Length);
-
-                }
                 if (Headers.Count > 0)
                 {
                     foreach (var x in this.Headers)
@@ -128,6 +121,12 @@ namespace MyWebServer
                         ba = UTF8Encoding.UTF8.GetBytes(temp);
                         network.Write(ba, 0, ba.Length);
                     }
+                }
+                else if (!string.IsNullOrEmpty(ServerHeader))
+                {
+                    temp = ServerHeader + "\n";
+                    ba = UTF8Encoding.UTF8.GetBytes(temp);
+                    network.Write(ba, 0, ba.Length);
                 }
             }
         }
