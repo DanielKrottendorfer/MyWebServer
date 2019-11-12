@@ -52,13 +52,32 @@ namespace Main
             {
                 Socket s = listener.AcceptSocket();
                 NetworkStream stream = new NetworkStream(s);
-                StreamReader sr = new StreamReader(stream);
-                while (!sr.EndOfStream)
-                {
-                    string line = sr.ReadLine();
-                    Console.WriteLine(line);
-                    if (string.IsNullOrEmpty(line)) break;
-                }
+                //StreamReader sr = new StreamReader(stream);
+                //int contentlengthInt = -1;
+                //while (!sr.EndOfStream)
+                //{
+                //    string line = sr.ReadLine();
+                //    Console.WriteLine(line);
+                //    if (line.StartsWith("Content-Length"))
+                //    {
+                //        string[] contentlengthTest = line.Split(' ');
+                //        Console.WriteLine(contentlengthTest[1]);
+                //    }
+                //    if (string.IsNullOrEmpty(line)) break;
+                //}
+
+                //if(contentlengthInt > 0)
+                //{
+                //    byte[] bodyStream = new byte[contentlengthInt];
+                //    char[] buffer = new char[contentlengthInt];
+                //    sr.Read(buffer, 0, contentlengthInt);
+                //    bodyStream = Encoding.UTF8.GetBytes(buffer);
+                //    Console.WriteLine("Content:\n" + Encoding.UTF8.GetString(bodyStream));
+                //    contentlengthInt = -1;
+                //}
+                Request r = new Request(stream);
+
+                Console.Write(r.ContentString);
 
                 StreamWriter sw = new StreamWriter(stream);
                 var body = "<form action='' method='get'>First Value: <input type='text' name='firstValue'><br>Second Value: <input type='text' name='secondValue'><br><button type='submit' formmethod='post'>absenden</button></form>";
