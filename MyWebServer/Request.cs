@@ -56,7 +56,7 @@ namespace MyWebServer
             }
 
             string testTemp;
-            if (this.Headers.TryGetValue("Content-Length" , out testTemp))
+            if (this.Headers.TryGetValue("content-length" , out testTemp))
             {
                 int contentlengthInt = -1;
                 try
@@ -73,7 +73,6 @@ namespace MyWebServer
                     char[] buffer = new char[contentlengthInt];
                     rStream.Read(buffer, 0, contentlengthInt);
                     bodyStream = Encoding.UTF8.GetBytes(buffer);
-                    Console.WriteLine("Content:\n" + Encoding.UTF8.GetString(bodyStream));
                     contentlengthInt = -1;
                     this.ContentBytes = bodyStream;
                 }
