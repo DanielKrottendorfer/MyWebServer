@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Data.SqlClient;
+using Npgsql;
 
 using MyWebServer;
 
@@ -35,6 +36,7 @@ namespace Main
             while (true)
             {
                 temperatureData.temperature += negSet;
+                /*
                 using (SqlConnection db = new SqlConnection(@"Data Source=127.0.0.1/postgres,5432;Network Library=DBMSSOCN;Initial Catalog=postgres;User ID=postgres;Password=postgres;"))
                 {
                     db.Open();
@@ -47,6 +49,18 @@ namespace Main
                     db.Close();
                     db.Dispose();
                 }
+                */
+
+                string connstring = "Server=127.0.0.1; Port=5432; User ID=postgres; Password=postgres;Database=postgres;";
+                NpgsqlConnection db = new NpgsqlConnection(connstring);
+                db.Open();
+                NpgsqlCommand cmd = new NpgsqlCommand("Select * from test WHERE temp_id = 1", db);
+                NpgsqlDataReader reader = cmd.ExecuteReader();
+                reader.Read();
+                Console.WriteLine(reader.GetInt64(0));
+                Console.WriteLine(reader.GetInt64(1));
+                Console.WriteLine(reader.GetDateTime(2));
+
                 if (temperatureData.temperature == 30 || temperatureData.temperature == -30)
                 {
                     negSet = negSet * -1;
