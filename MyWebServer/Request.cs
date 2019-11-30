@@ -13,10 +13,6 @@ namespace MyWebServer
         public Request(System.IO.Stream network)
         {
             this.Headers = new Dictionary<string, string>();
-            
-            //this.ContentStream = new MemoryStream();
-            //network.CopyTo(this.ContentStream);
-            //network.Seek(0, SeekOrigin.Begin);
 
             var rStream = new StreamReader(network);
 
@@ -107,7 +103,23 @@ namespace MyWebServer
             }
          }
 
-        public int ContentLength { get; }
+        public int ContentLength { get {
+                string testTemp;
+                if (this.Headers.TryGetValue("content-length", out testTemp))
+                {
+                    int contentlengthInt = 0;
+                    try
+                    {
+                        contentlengthInt = Int32.Parse(testTemp.Trim());
+                    }
+                    catch (Exception e)
+                    {
+                        contentlengthInt = 0;
+                    }
+                    return contentlengthInt;
+                }
+                return 0;
+            } }
 
         public string ContentType => throw new NotImplementedException();
 
