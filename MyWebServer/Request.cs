@@ -14,7 +14,7 @@ namespace MyWebServer
         {
             this.Headers = new Dictionary<string, string>();
 
-            var rStream = new StreamReader(network);
+            StreamReader rStream = new StreamReader(network);
 
             
             string temp = rStream.ReadLine();
@@ -74,7 +74,6 @@ namespace MyWebServer
                 }
 
             }
-            
         }
         public bool IsValid  { 
             get {
