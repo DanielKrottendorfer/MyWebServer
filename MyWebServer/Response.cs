@@ -100,46 +100,50 @@ namespace MyWebServer
 
         public void Send(Stream network)
         {
-            string temp = "HTTP/1.1 " + this.Status + "\n \n";
-            var ba = UTF8Encoding.UTF8.GetBytes(temp);
-            network.Write(ba, 0, ba.Length);
+            StreamWriter sw = new StreamWriter(network);
+            string temp = "HTTP/1.1 " + this.Status + "\n";
+            sw.Write(temp);
+            if (Headers.Count > 0)
+            {
+                foreach (var x in this.Headers)
+                {
+                    temp = x.Key + ": " + x.Value + "\n";
+                    sw.Write(temp);
+                }
+            }
+            else if (!string.IsNullOrEmpty(ServerHeader))
+            {
+                temp = ServerHeader + "\n";
+                var ba = UTF8Encoding.UTF8.GetBytes(temp);
+                sw.Write(ba);
+            }
+            sw.Write("\n");
             if (_content != null)
             {
-                network.Write(this._content, 0, this._content.Length);
+                sw.Write(this.GetContentString());
             }
             else if (ContentType != null)
             {
                 throw new Exception();
             }
-            else
-            {
-                if (Headers.Count > 0)
-                {
-                    foreach (var x in this.Headers)
-                    {
-                        temp = x.Key + ": " + x.Value + "\n";
-                        ba = UTF8Encoding.UTF8.GetBytes(temp);
-                        network.Write(ba, 0, ba.Length);
-                    }
-                }
-                else if (!string.IsNullOrEmpty(ServerHeader))
-                {
-                    temp = ServerHeader + "\n";
-                    ba = UTF8Encoding.UTF8.GetBytes(temp);
-                    network.Write(ba, 0, ba.Length);
-                }
-            }
+            sw.Flush();
+        }
+        public string GetContentString()
+        {
+            return UTF8Encoding.UTF8.GetString(_content);
         }
 
         private byte[] _content;
         public void SetContent(string content)
         {
             _content = UTF8Encoding.UTF8.GetBytes(content);
+            AddHeader("content-length", "" + _content.Length);
         }
 
         public void SetContent(byte[] content)
         {
             _content = content;
+            AddHeader("content-length", "" + _content.Length);
         }
 
         public void SetContent(Stream stream)
@@ -148,6 +152,7 @@ namespace MyWebServer
             {
                 stream.CopyTo(ms);
                 _content = ms.ToArray();
+                AddHeader("content-length", "" + _content.Length);
             }
         }
     }

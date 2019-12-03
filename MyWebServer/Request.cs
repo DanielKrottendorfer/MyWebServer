@@ -139,5 +139,20 @@ namespace MyWebServer
 
         public byte[] ContentBytes { get; }
 
+        public string toString()
+        {
+            string s = "URL: \n";
+            s += this.Url.ToString();
+            s += "Headers: \n";
+            foreach (KeyValuePair<string, string> kvp in Headers)
+            {
+                //textBox3.Text += ("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
+                s += string.Format("Key = {0}, Value = {1} \n", kvp.Key, kvp.Value);
+            }
+            s += "Content: \n";
+            s += ContentString;
+            return s;
+        }
+
     }
 }

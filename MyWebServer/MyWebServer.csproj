@@ -74,6 +74,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GayPlugin.cs" />
     <Compile Include="IPlugin.cs" />
     <Compile Include="IPluginManager.cs" />
     <Compile Include="IRequest.cs" />
@@ -86,6 +87,7 @@
     <Compile Include="Response.cs" />
     <Compile Include="TestPlugin.cs" />
     <Compile Include="Url.cs" />
+    <Compile Include="WebsAccepter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

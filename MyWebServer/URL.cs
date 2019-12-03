@@ -18,7 +18,7 @@ namespace MyWebServer
                 string[] temp = path.Split('#');
                 if (temp.Length == 2)
                 {
-                    Fragment = temp[1];
+                    this.Fragment = temp[1];
                 }
 
                 temp = temp[0].Split('?');
@@ -89,5 +89,28 @@ namespace MyWebServer
         public string Extension => throw new NotImplementedException();
 
         public string Fragment { get; }
+
+        override public string ToString()
+        {
+            string s = "";
+            s = s + "RawUrl: " + RawUrl + "\n";
+            s = s + "Fragment: " + Fragment + "\n";
+            s = s + "Path: " + Path + "\n\n";
+            s += "Parameters: \n";
+            foreach (KeyValuePair<string, string> kvp in Parameter)
+            {
+                //textBox3.Text += ("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
+               s += string.Format("Key = {0}, Value = {1} \n", kvp.Key, kvp.Value);
+            }
+            s += "\n";
+            s += "Segments: \n";
+            foreach ( string segmet in Segments)
+            {
+                s += segmet;
+            }
+            s += "\n";
+            return s;
+        }
+
     }
 }
