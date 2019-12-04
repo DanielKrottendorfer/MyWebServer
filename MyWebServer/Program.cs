@@ -11,6 +11,7 @@ using System.Data.SqlClient;
 using Npgsql;
 
 using MyWebServer;
+using BIF.SWE1.Interfaces;
 
 namespace Main
 {
@@ -21,7 +22,7 @@ namespace Main
             NetworkStream stream = new NetworkStream(s);
             Request r = new Request(stream);
             GayPlugin gp = new GayPlugin();
-            Response rs = (Response) gp.Handle(r);
+            IResponse rs = gp.Handle(r);
             rs.Send(stream);
 
             s.Close();
