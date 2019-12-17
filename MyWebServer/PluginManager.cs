@@ -3,18 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MyWebServer;
+using BIF.SWE1.Interfaces;
 
-namespace BIF.SWE1.Interfaces
+namespace MyWebServer
 {
-    class PluginManager : IPlugin
+    class PluginManager : IPluginManager
     {
-        public float CanHandle(IRequest req)
+        public IEnumerable<IPlugin> Plugins => throw new NotImplementedException();
+
+        public void Add(IPlugin plugin)
         {
             throw new NotImplementedException();
         }
 
-        public IResponse Handle(IRequest req)
+        public void Add(string plugin)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Clear()
         {
             throw new NotImplementedException();
         }
