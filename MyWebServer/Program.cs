@@ -20,7 +20,7 @@ namespace Main
         public static void foo(Socket s)
         {
             NetworkStream stream = new NetworkStream(s);
-            Request r = new Request(stream);
+            IRequest r = new Request(stream);
             GayPlugin gp = new GayPlugin();
             IResponse rs = gp.Handle(r);
             rs.Send(stream);
@@ -28,10 +28,20 @@ namespace Main
             s.Close();
         }
 
+        public static void tempDatabase()
+        {
+            UselessShitTemp temper = new UselessShitTemp();
+            temper.genTemData();
+        }
+
 
         static void Main(string[] args)
         {
             TcpListener listener = new TcpListener(IPAddress.Any, 8081);
+            UselessShitTemp tester = new UselessShitTemp();
+            tester.itsGay();
+            Thread dba = new Thread(() => tempDatabase());
+            dba.Start();
             listener.Start();
             while (true)
             {
