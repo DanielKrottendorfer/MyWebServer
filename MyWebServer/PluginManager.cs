@@ -14,46 +14,99 @@ namespace MyWebServer
     {
         public PluginManager()
         {
-            Plugins = new List<IPlugin>();
-        }
-        public IEnumerable<IPlugin> Plugins  { get; }
-
-        public void Add(IPlugin plugin)
-        {
-            Plugins.Append(plugin);
+            _plugins = new List<IPlugin>();
         }
 
-        public void Add(string plugin)
+        private readonly static object syncObj = new object();
+        private List<IPlugin> _plugins;
+        public IEnumerable<IPlugin> Plugins { get { lock (syncObj) { return _plugins; } } }
+
+        public void Load(String file)
         {
-            //Load the DLLs from the Plugins directory
-            if (Directory.Exists(plugin))
+            if (!File.Exists(file) || !file.EndsWith(".dll", true, null))
+                return;
+
+            Assembly asm = null;
+
+            try
             {
-                string[] files = Directory.GetFiles(plugin);
-                foreach (string file in files)
-                {
-                    if (file.EndsWith(".dll"))
-                    {
-                        Assembly.LoadFile(Path.GetFullPath(file));
-                    }
-                }
+                asm = Assembly.LoadFile(file);
+            }
+            catch (Exception)
+            {
+                // unable to load
+                return;
             }
 
-            Type interfaceType = typeof(IPlugin);
-            //Fetch all types that implement the interface IPlugin and are a class
-            Type[] types = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(a => a.GetTypes())
-                .Where(p => interfaceType.IsAssignableFrom(p) && p.IsClass)
-                .ToArray();
-            foreach (Type type in types)
+            Type pluginInfo = null;
+            try
             {
-                //Create a new instance of all found types
-                Plugins.Append((IPlugin)Activator.CreateInstance(type));
+                Type[] types = asm.GetTypes();
+                Assembly core = AppDomain.CurrentDomain.GetAssemblies().Single(x =>
+                {
+                   // Console.WriteLine(x.GetName());
+                    return x.GetName().Name.Equals("MyWebServer");
+                });
+                Type type = core.GetType("BIF.SWE1.Interfaces.IPlugin");
+                foreach (var t in types)
+                    if (type.IsAssignableFrom((Type)t))
+                    {
+                        pluginInfo = t;
+                        break;
+                    }
+
+                if (pluginInfo != null)
+                {
+                    Object o = Activator.CreateInstance(pluginInfo);
+                    IPlugin plugin = (IPlugin)o;
+                    _plugins.Add(plugin);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        public void LoadAll()
+        {
+            String[] files = Directory.GetFiles("./Plugins/", "*.dll");
+            foreach (var s in files)
+            {
+                string p = Path.Combine(Environment.CurrentDirectory, s);
+                Console.WriteLine(p);
+                Load(p);
             }
         }
 
         public void Clear()
         {
             throw new NotImplementedException();
+        }
+
+        public void ToString()
+        {
+            Console.WriteLine(this._plugins.Count());
+            foreach(IPlugin p in this._plugins)
+            {
+                try
+                {
+                    Console.WriteLine(p.ToString());
+                }catch(Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }
+        }
+
+        public void Add(IPlugin plugin)
+        {
+            _plugins.Add(plugin);
+        }
+
+        public void Add(string plugin)
+        {
+            Load(plugin);
         }
     }
 }

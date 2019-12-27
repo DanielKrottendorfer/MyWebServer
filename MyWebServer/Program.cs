@@ -17,13 +17,19 @@ namespace Main
 {
     class Program
 {
-        public static void foo(Socket s)
+        public static void foo(Socket s,IPluginManager pm)
         {
             NetworkStream stream = new NetworkStream(s);
             IRequest r = new Request(stream);
-            GayPlugin gp = new GayPlugin();
-            IResponse rs = gp.Handle(r);
-            rs.Send(stream);
+            foreach(IPlugin p in pm.Plugins)
+            {
+                if(p.CanHandle(r)>0.0f)
+                {
+                    IResponse rs = p.Handle(r);
+                    rs.Send(stream);
+                    break;
+                }
+            }
 
             s.Close();
         }
@@ -34,9 +40,12 @@ namespace Main
             temper.genTemData();
         }
 
-
         static void Main(string[] args)
         {
+            PluginManager pmm = new PluginManager();
+            pmm.LoadAll();
+            IPluginManager pm = pmm;
+            //pm.Add("./Plugins/ClassLibrary1.dll");
             TcpListener listener = new TcpListener(IPAddress.Any, 8081);
             UselessShitTemp tester = new UselessShitTemp();
             tester.itsGay();
@@ -46,8 +55,7 @@ namespace Main
             while (true)
             {
                 Socket s = listener.AcceptSocket();
-                Thread t = new Thread(() => foo(s));
-                t.Start();
+                foo(s,pm);
             }
         }
     }
