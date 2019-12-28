@@ -1,0 +1,22 @@
+<script>
+window.onload = function () {
+
+var chart = new CanvasJS.Chart("chartContainer", {
+	animationEnabled: true,
+	theme: "light2",
+	title:{
+		text: "Temperature Data"
+	},
+	
+	axisX:{
+		title: "Datum",
+		valueFormatString: "DD.MM.YYYY hh:mm TT",
+	},
+	
+	axisY:{
+		includeZero: false
+	},
+	data: [{        
+		type: "line",       
+		dataPoints: [
+            
