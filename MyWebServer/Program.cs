@@ -36,7 +36,7 @@ namespace Main
 
         public static void tempDatabase()
         {
-            UselessShitTemp temper = new UselessShitTemp();
+            DbData temper = new DbData();
             temper.genTemData();
         }
 
@@ -47,8 +47,8 @@ namespace Main
             IPluginManager pm = pmm;
             //pm.Add("./Plugins/ClassLibrary1.dll");
             TcpListener listener = new TcpListener(IPAddress.Any, 8081);
-            UselessShitTemp tester = new UselessShitTemp();
-            tester.itsGay();
+            DbData tester = new DbData();
+            tester.tempDataInsert();
             Thread dba = new Thread(() => tempDatabase());
             dba.Start();
             listener.Start();
