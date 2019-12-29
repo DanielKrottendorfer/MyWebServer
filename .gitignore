@@ -3,10 +3,18 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-*.dll
-*.xml
-*.config
-*.exe
+build/*.dll
+build/*.xml
+build/*.config
+build/*.exe
+build/res/*.dll
+build/res/*.xml
+build/res/*.config
+build/res/*.exe
+build/Plugins/*.dll
+build/Plugins/*.xml
+build/Plugins/*.config
+build/Plugins/*.exe
 
 # User-specific files
 *.rsuser
