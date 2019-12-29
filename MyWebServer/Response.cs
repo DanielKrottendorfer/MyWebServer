@@ -126,7 +126,14 @@ namespace MyWebServer
             {
                 throw new Exception();
             }
-            sw.Flush();
+            try
+            {
+                sw.Flush();
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
         public string GetContentString()
         {

@@ -42,10 +42,9 @@ namespace Main
 
         static void Main(string[] args)
         {
-            PluginManager pmm = new PluginManager();
-            pmm.LoadAll();
-            IPluginManager pm = pmm;
-            //pm.Add("./Plugins/ClassLibrary1.dll");
+            //pmm.LoadAll();
+            IPluginManager pm = new PluginManager();
+            pm.Add("SomePlugin.dll");
             TcpListener listener = new TcpListener(IPAddress.Any, 8081);
             DbData tester = new DbData();
             tester.tempDataInsert();

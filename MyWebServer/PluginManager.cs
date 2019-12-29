@@ -84,7 +84,7 @@ namespace MyWebServer
             throw new NotImplementedException();
         }
 
-        public void ToString()
+        public void PrintPlugins()
         {
             Console.WriteLine(this._plugins.Count());
             foreach(IPlugin p in this._plugins)
@@ -106,7 +106,9 @@ namespace MyWebServer
 
         public void Add(string plugin)
         {
-            Load(plugin);
+            string p = Path.Combine(Environment.CurrentDirectory, "Plugins\\" + plugin);
+            Console.WriteLine(p);
+            Load(p);
         }
     }
 }
