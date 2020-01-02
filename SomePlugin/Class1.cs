@@ -97,8 +97,7 @@ namespace SomePlugin
                 {
                     datepage += dateDatePage.ToString();
                     fromDate = dateDatePage;
-                    toDate = dateDatePage.AddDays(-1);
-                    Console.WriteLine("FUCK ME IN THE PUSSY BAUS");
+                    toDate = dateDatePage.AddDays(-7);
                 }
 
                 datepage += "\" />";
@@ -110,13 +109,12 @@ namespace SomePlugin
                 string connstring = "Server =127.0.0.1; Port=5432; User ID=postgres; Password=postgres;Database=postgres;";
                 NpgsqlConnection db = new NpgsqlConnection(connstring);
                 db.Open();
-                NpgsqlCommand cmd = new NpgsqlCommand("Select * from test WHERE date::date BETWEEN @p and @q", db);
+                NpgsqlCommand cmd = new NpgsqlCommand("Select * from test WHERE date::date < @p and date::date > @q", db);
                 cmd.Parameters.AddWithValue("p", fromDate);
                 cmd.Parameters.AddWithValue("q", toDate);
                 NpgsqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    Console.WriteLine("INSTANT DROPPING BOIS");
                     DateTime itsTime = reader.GetDateTime(2);
                     string firstPart = itsTime.Month.ToString();
                     int firstInt = Int32.Parse(firstPart);
