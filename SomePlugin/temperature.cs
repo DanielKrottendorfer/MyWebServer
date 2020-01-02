@@ -14,9 +14,7 @@ namespace SomePlugin
     {
         public float CanHandle(IRequest req)
         {
-            //string damn = req.Url.RawUrl.ToString();
-            //damn = damn.Split('/')[1];
-            if(req.Url.Segments.Contains("temperature") || req.Url.Segments.Contains("GetTemperature"))
+            if (req.Url.Segments.Contains("temperature") || req.Url.Segments.Contains("GetTemperature"))
                 return 1.0f;
             return 0.0f;
         }
@@ -26,11 +24,12 @@ namespace SomePlugin
         {
             Response r = new Response();
             r.StatusCode = 200;
+
             string[] urlValue = req.Url.RawUrl.Split('/');
 
             if (urlValue[1] == "temperature")
             {
-                DateTime fromDate, toDate;
+                DateTime fromDate = DateTime.Now, toDate = DateTime.Now;
                 var headerPath = @".\res\header.html";
                 var graphFirstPartPath = @".\res\graphfirsttemperature.html";
                 var graphSecondPartPath = @".\res\graphsecondtemperature.html";
@@ -45,7 +44,7 @@ namespace SomePlugin
 
                 if (contentArray[0].Split('=')[0] == "type")
                 {
-                    if(contentArray[0].Split('=')[1] == "back")
+                    if (contentArray[0].Split('=')[1] == "back")
                     {
                         string dateTest = contentArray[1].Split('=')[1];
                         dateTest = dateTest.Split('+')[0];
@@ -55,7 +54,7 @@ namespace SomePlugin
                         dateTest = dateTest.Split(' ')[0];
                         datepage += dateTest;
                     }
-                    else if(contentArray[0].Split('=')[1] == "forward")
+                    else if (contentArray[0].Split('=')[1] == "forward")
                     {
                         string dateTest = contentArray[1].Split('=')[1];
                         dateTest = dateTest.Split('+')[0];
@@ -75,14 +74,23 @@ namespace SomePlugin
                 }
                 else if (contentArray[0].Split('=')[0] == "datefrom")
                 {
-                    fromDate = Convert.ToDateTime(contentArray[0].Split('=')[1]);
-                    toDate = Convert.ToDateTime(contentArray[1].Split('=')[1]);
-                    datepage += fromDate.ToString();
+                    if (!string.IsNullOrEmpty(contentArray[0].Split('=')[1]))
+                    {
+                        fromDate = Convert.ToDateTime(contentArray[0].Split('=')[1]);
+                        toDate = Convert.ToDateTime(contentArray[1].Split('=')[1]);
+                        datepage += fromDate.ToString();
+                    }
+                    else
+                    {
+                        string dateTest = dateDatePage.ToString();
+                        dateTest = dateTest.Split(' ')[0];
+                        datepage += dateTest;
+                        toDate = dateDatePage;
+                        fromDate = dateDatePage.AddDays(-7);
+                    }
                 }
                 else
                 {
-                    //string dateTest = dateDatePage.ToString();
-                    //dateTest = dateTest.Split(' ')[0];
                     string dateTest = dateDatePage.ToString();
                     dateTest = dateTest.Split(' ')[0];
                     datepage += dateTest;
@@ -99,7 +107,7 @@ namespace SomePlugin
                 string connstring = "Server =127.0.0.1; Port=5432; User ID=postgres; Password=postgres;Database=postgres;";
                 NpgsqlConnection db = new NpgsqlConnection(connstring);
                 db.Open();
-                NpgsqlCommand cmd = new NpgsqlCommand("Select * from test WHERE date::date < @p and date::date > @q", db);
+                NpgsqlCommand cmd = new NpgsqlCommand("Select * from test WHERE date::date <= @p and date::date >= @q", db);
                 cmd.Parameters.AddWithValue("q", fromDate);
                 cmd.Parameters.AddWithValue("p", toDate);
                 NpgsqlDataReader reader = cmd.ExecuteReader();
@@ -131,23 +139,33 @@ namespace SomePlugin
             else if (urlValue[1] == "GetTemperature")
             {
                 Console.WriteLine(req.Method);
-                DateTime fucker = Convert.ToDateTime(urlValue[4] + "/" + urlValue[3] + "/" + urlValue[2]);
-                var body = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><day>";
 
-                string connstring = "Server =127.0.0.1; Port=5432; User ID=postgres; Password=postgres;Database=postgres;";
-                NpgsqlConnection db = new NpgsqlConnection(connstring);
-                db.Open();
-                NpgsqlCommand cmd = new NpgsqlCommand("Select * from test WHERE date::date = @p", db);
-                cmd.Parameters.AddWithValue("p", fucker);
-                NpgsqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                if (urlValue.Length == 5 && arrayChecker(urlValue))
                 {
-                    body += "<value><time>" + reader.GetDateTime(2) + "</time><temperature>" + reader.GetInt64(1) + "</temperature></value>";
+                    Console.WriteLine(urlValue.Length);
+                    DateTime fucker = Convert.ToDateTime(urlValue[4] + "/" + urlValue[3] + "/" + urlValue[2]);
+                    var body = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><day>";
+
+                    string connstring = "Server =127.0.0.1; Port=5432; User ID=postgres; Password=postgres;Database=postgres;";
+                    NpgsqlConnection db = new NpgsqlConnection(connstring);
+                    db.Open();
+                    NpgsqlCommand cmd = new NpgsqlCommand("Select * from test WHERE date::date = @p", db);
+                    cmd.Parameters.AddWithValue("p", fucker);
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        body += "<value><time>" + reader.GetDateTime(2) + "</time><temperature>" + reader.GetInt64(1) + "</temperature></value>";
+                    }
+                    db.Close();
+                    body += "</day>";
+                    r.SetContent(body);
+                    return r;
                 }
-                db.Close();
-                body += "</day>";
-                r.SetContent(body);
-                return r;
+                else
+                {
+                    r.SetContent("Should use a propper format");
+                    return r;
+                }
             }
             else
             {
@@ -155,6 +173,18 @@ namespace SomePlugin
                 return r;
             }
         }
-
+        public bool arrayChecker(string[] array)
+        {
+            bool check = true;
+            for (int x = 1; x < array.Length; x++)
+            {
+                if (string.IsNullOrEmpty(array[x]))
+                {
+                    Console.WriteLine(array[x]);
+                    check = false;
+                }
+            }
+            return check;
+        }
     }
 }
