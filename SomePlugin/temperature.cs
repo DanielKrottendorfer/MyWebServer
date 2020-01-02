@@ -10,20 +10,15 @@ using MyWebServer;
 
 namespace SomePlugin
 {
-    class GayPlugin : IPlugin
+    public class TemperaturePlugin : IPlugin
     {
         public float CanHandle(IRequest req)
         {
-            string damn = req.Url.RawUrl.ToString();
-            damn = damn.Split('/')[1];
-            if (damn == "temperature" || damn == "GetTemperature")
-            {
+            //string damn = req.Url.RawUrl.ToString();
+            //damn = damn.Split('/')[1];
+            if(req.Url.Segments.Contains("temperature") || req.Url.Segments.Contains("GetTemperature"))
                 return 1.0f;
-            }
-            else
-            {
-                return 0.0f;
-            }
+            return 0.0f;
         }
 
 
@@ -53,51 +48,46 @@ namespace SomePlugin
                     if(contentArray[0].Split('=')[1] == "back")
                     {
                         string dateTest = contentArray[1].Split('=')[1];
+                        dateTest = dateTest.Split('+')[0];
                         toDate = Convert.ToDateTime(dateTest);
                         fromDate = toDate.AddDays(-7);
-                        datepage += fromDate.ToString();
-
+                        dateTest = fromDate.ToString();
+                        dateTest = dateTest.Split(' ')[0];
+                        datepage += dateTest;
                     }
                     else if(contentArray[0].Split('=')[1] == "forward")
                     {
                         string dateTest = contentArray[1].Split('=')[1];
+                        dateTest = dateTest.Split('+')[0];
                         DateTime tempDate = Convert.ToDateTime(dateTest);
                         fromDate = tempDate.AddDays(7);
                         toDate = fromDate.AddDays(7);
-                        datepage += fromDate.ToString();
+                        dateTest = fromDate.ToString();
+                        dateTest = dateTest.Split(' ')[0];
+                        datepage += dateTest;
                     }
                     else
                     {
                         datepage += dateDatePage.ToString();
                         fromDate = dateDatePage;
-                        toDate = dateDatePage.AddHours(-7);
+                        toDate = dateDatePage.AddDays(-7);
                     }
                 }
                 else if (contentArray[0].Split('=')[0] == "datefrom")
                 {
-                    //bool caught = false;
-                    //try
-                    //{
-                        fromDate = Convert.ToDateTime(contentArray[0].Split('=')[1]);
-                        toDate = Convert.ToDateTime(contentArray[1].Split('=')[1]);
-                    /*}
-                    catch (FormatException e)
-                    {
-                        caught = true;
-                        Console.WriteLine("Kein Datum gewählt");
-                    }
-                    if(!caught)
-                    {
-                        fromDate = Convert.ToDateTime(contentArray[0].Split('=')[1]);
-                        toDate = Convert.ToDateTime(contentArray[1].Split('=')[1]);
-                    }*/
+                    fromDate = Convert.ToDateTime(contentArray[0].Split('=')[1]);
+                    toDate = Convert.ToDateTime(contentArray[1].Split('=')[1]);
                     datepage += fromDate.ToString();
                 }
                 else
                 {
-                    datepage += dateDatePage.ToString();
-                    fromDate = dateDatePage;
-                    toDate = dateDatePage.AddDays(-7);
+                    //string dateTest = dateDatePage.ToString();
+                    //dateTest = dateTest.Split(' ')[0];
+                    string dateTest = dateDatePage.ToString();
+                    dateTest = dateTest.Split(' ')[0];
+                    datepage += dateTest;
+                    toDate = dateDatePage;
+                    fromDate = dateDatePage.AddDays(-7);
                 }
 
                 datepage += "\" />";
@@ -110,8 +100,8 @@ namespace SomePlugin
                 NpgsqlConnection db = new NpgsqlConnection(connstring);
                 db.Open();
                 NpgsqlCommand cmd = new NpgsqlCommand("Select * from test WHERE date::date < @p and date::date > @q", db);
-                cmd.Parameters.AddWithValue("p", fromDate);
-                cmd.Parameters.AddWithValue("q", toDate);
+                cmd.Parameters.AddWithValue("q", fromDate);
+                cmd.Parameters.AddWithValue("p", toDate);
                 NpgsqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {

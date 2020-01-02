@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyWebServer", "MyWebServer\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{09B413ED-3BEB-4ECC-B7D5-0D20E6600E85}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SomePlugin", "SomePlugin\SomePlugin.csproj", "{D96ACEEC-6453-462C-9B69-62F74557BF28}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemperaturePlugin", "SomePlugin\TemperaturePlugin.csproj", "{D96ACEEC-6453-462C-9B69-62F74557BF28}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToLowerPlugin", "ToLowerPlugin\ToLowerPlugin.csproj", "{DC1F22D0-7DD4-4262-A1D4-0CCD9BD63A8E}"
 EndProject
