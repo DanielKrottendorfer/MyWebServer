@@ -42,9 +42,8 @@ namespace Main
 
         static void Main(string[] args)
         {
-            //pmm.LoadAll();
             IPluginManager pm = new PluginManager();
-            pm.Add("SomePlugin.dll");
+            LoadAll(pm);
             TcpListener listener = new TcpListener(IPAddress.Any, 8081);
             DbData tester = new DbData();
             tester.tempDataInsert();
@@ -55,6 +54,15 @@ namespace Main
             {
                 Socket s = listener.AcceptSocket();
                 foo(s,pm);
+            }
+        }
+
+        public static void LoadAll(IPluginManager pm)
+        {
+            String[] files = Directory.GetFiles("./Plugins/", "*.dll");
+            foreach (var s in files)
+            {
+                pm.Add(s.Split('/').Last());
             }
         }
     }
