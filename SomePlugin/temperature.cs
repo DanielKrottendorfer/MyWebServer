@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.IO;
 using System.Threading.Tasks;
 using Npgsql;
@@ -29,7 +30,7 @@ namespace SomePlugin
 
             if (urlValue[1] == "temperature")
             {
-                DateTime fromDate = DateTime.Now, toDate = DateTime.Now;
+                DateTime fromDate, toDate;
                 var headerPath = @".\res\header.html";
                 var graphFirstPartPath = @".\res\graphfirsttemperature.html";
                 var graphSecondPartPath = @".\res\graphsecondtemperature.html";
@@ -47,12 +48,14 @@ namespace SomePlugin
                     if (contentArray[0].Split('=')[1] == "back")
                     {
                         string dateTest = contentArray[1].Split('=')[1];
+                        Console.WriteLine(dateTest);
                         dateTest = dateTest.Split('+')[0];
                         toDate = Convert.ToDateTime(dateTest);
                         fromDate = toDate.AddDays(-7);
                         dateTest = fromDate.ToString();
                         dateTest = dateTest.Split(' ')[0];
                         datepage += dateTest;
+                        Console.WriteLine(datepage);
                     }
                     else if (contentArray[0].Split('=')[1] == "forward")
                     {
@@ -91,42 +94,49 @@ namespace SomePlugin
                 }
                 else
                 {
-                    string dateTest = dateDatePage.ToString();
+                    fromDate = dateDatePage.AddDays(-7);
+                    string dateTest = fromDate.ToString();
                     dateTest = dateTest.Split(' ')[0];
                     datepage += dateTest;
                     toDate = dateDatePage;
-                    fromDate = dateDatePage.AddDays(-7);
+                    Console.WriteLine(fromDate);
                 }
 
                 datepage += "\" />";
-                Console.WriteLine(fromDate);
-                Console.WriteLine(toDate);
-                Console.Write(req.ContentString);
                 var table = "";
                 var graph = "";
                 string connstring = "Server =127.0.0.1; Port=5432; User ID=postgres; Password=postgres;Database=postgres;";
                 NpgsqlConnection db = new NpgsqlConnection(connstring);
+                Main.Program._pool.WaitOne();
                 db.Open();
                 NpgsqlCommand cmd = new NpgsqlCommand("Select * from test WHERE date::date <= @p and date::date >= @q", db);
                 cmd.Parameters.AddWithValue("q", fromDate);
                 cmd.Parameters.AddWithValue("p", toDate);
+                //should be looked over, doesn't look that good
+                try
+                {
+                    cmd.Prepare();
+                }
+                catch
+                {
+                    Console.WriteLine("Invalid query");
+                    r.SetContent("Invalid value");
+                    return r;
+                }
+
                 NpgsqlDataReader reader = cmd.ExecuteReader();
+
                 while (reader.Read())
                 {
                     DateTime itsTime = reader.GetDateTime(2);
-                    string firstPart = itsTime.Month.ToString();
-                    int firstInt = Int32.Parse(firstPart);
-                    firstInt--;
-                    firstPart = firstInt.ToString();
-                    string secondPart = itsTime.Hour.ToString();
-                    int secondInt = Int32.Parse(secondPart);
-                    secondInt--;
-                    secondPart = secondInt.ToString();
+                    string firstPart = lowerString(itsTime.Month.ToString());
+                    string secondPart = lowerString(itsTime.Hour.ToString());
                     table += "<tr><th scope=\"row\">" + reader.GetInt64(1) + "</th><td>" + reader.GetDateTime(2) + "</td></tr>";
                     graph += "{ x: new Date( Date.UTC (" + itsTime.Year.ToString() + ", " + firstPart + "," + itsTime.Day.ToString() + "," + secondPart + "," + itsTime.Minute.ToString() + ") ), y: " + reader.GetInt64(1) + ",}, ";
                     //graph = "{ x: shitfuckhead, y: 6,},{ x: penis, y: 2,}, { x: 12.12.2019-18:15:11, y: 5,}, { x: 40, y: 7,},{ x: 50, y: 1,},{ x: 60, y: 5,}, { x: 70, y: 5,},{ x: 80, y: 2,},{ x: 90, y: 2,}";
                 }
                 db.Close();
+                Main.Program._pool.Release();
                 body += File.ReadAllText(graphFirstPartPath) + graph + File.ReadAllText(graphSecondPartPath) + File.ReadAllText(tableFirstPartPath) + table + File.ReadAllText(tableSecondPartPath) + datepage + File.ReadAllText(tableThirdPartPath);
 
                 var header = File.ReadAllText(headerPath);
@@ -142,21 +152,45 @@ namespace SomePlugin
 
                 if (urlValue.Length == 5 && arrayChecker(urlValue))
                 {
+                    DateTime fucker;
                     Console.WriteLine(urlValue.Length);
-                    DateTime fucker = Convert.ToDateTime(urlValue[4] + "/" + urlValue[3] + "/" + urlValue[2]);
+                    //necessary, otherwhise date can't be set
+                    try
+                    {
+                        fucker = Convert.ToDateTime(urlValue[4] + "/" + urlValue[3] + "/" + urlValue[2]);
+                    }
+                    catch(FormatException e)
+                    {
+                        Console.WriteLine("Invalid Url");
+                        r.SetContent("Invalid Url");
+                        return r;
+                    }
+                    fucker = Convert.ToDateTime(urlValue[4] + "/" + urlValue[3] + "/" + urlValue[2]);
                     var body = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><day>";
 
                     string connstring = "Server =127.0.0.1; Port=5432; User ID=postgres; Password=postgres;Database=postgres;";
                     NpgsqlConnection db = new NpgsqlConnection(connstring);
+                    Main.Program._pool.WaitOne();
                     db.Open();
                     NpgsqlCommand cmd = new NpgsqlCommand("Select * from test WHERE date::date = @p", db);
                     cmd.Parameters.AddWithValue("p", fucker);
+                    try
+                    {
+                        cmd.Prepare();
+                    }
+                    catch
+                    {
+                        Console.WriteLine("Invalid query");
+                        r.SetContent("Invalid value");
+                        return r;
+                    }
                     NpgsqlDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         body += "<value><time>" + reader.GetDateTime(2) + "</time><temperature>" + reader.GetInt64(1) + "</temperature></value>";
                     }
                     db.Close();
+                    Main.Program._pool.Release();
                     body += "</day>";
                     r.SetContent(body);
                     return r;
@@ -185,6 +219,14 @@ namespace SomePlugin
                 }
             }
             return check;
+        }
+
+        public string lowerString(string str)
+        {
+            int firstInt = Int32.Parse(str);
+            firstInt--;
+            str = firstInt.ToString();
+            return str;
         }
     }
 }

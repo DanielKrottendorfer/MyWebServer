@@ -29,6 +29,10 @@ namespace MyWebServer
                     this.Url = new Url(splitStr[1]);
                 }
             }
+            else
+            {
+                this.Url = new Url("");
+            }
 
 
 
