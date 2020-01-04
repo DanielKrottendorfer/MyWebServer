@@ -29,7 +29,13 @@ namespace ToLowerPlugin
 
             if(req.ContentBytes != null)
             {
-                mid = req.ContentString.ToLower().Split('=').Last();
+                string temp = req.ContentString.ToLower();
+                int i = temp.IndexOf('=');
+
+                if (i > 0)
+                    temp = temp.Substring(i+1);
+
+                mid = temp;
             }
 
             r.StatusCode = 200;
