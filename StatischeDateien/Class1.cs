@@ -12,6 +12,7 @@ namespace StatischeDateien
 {
     public class Class1 : IPlugin
     {
+        private readonly static object syncObj = new object();
         public float CanHandle(IRequest req)
         {
             if (req.Url.Segments.Contains("StatischeDateien"))
@@ -34,9 +35,13 @@ namespace StatischeDateien
             IResponse r = new Response();
             r.StatusCode = 200;
 
-
-            string top = File.ReadAllText(@".\res\firstStatischeDatei.html");
-            string bot = File.ReadAllText(@".\res\secondStatischeDatei.html");
+            string top;
+            string bot;
+            lock (syncObj)
+            {
+                top = File.ReadAllText(@".\res\firstToLower.html");
+                bot = File.ReadAllText(@".\res\secondToLower.html");
+            }
             string mid = "";
 
             try

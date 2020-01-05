@@ -10,21 +10,26 @@ using MyWebServer;
 
 namespace ToLowerPlugin
 {
+
     public class Class1 : IPlugin
     {
+        private readonly static object syncObj = new object();
         public float CanHandle(IRequest req)
         {
             if (req.Url.Segments.Contains("ToLower"))
                 return 1.0f;
             return 0.0f;
         }
-
         public IResponse Handle(IRequest req)
         {
             IResponse r = new Response();
-
-            string top = File.ReadAllText(@".\res\firstToLower.html");
-            string bot = File.ReadAllText(@".\res\secondToLower.html");
+            string top;
+            string bot;
+            lock (syncObj)
+            {
+                top = File.ReadAllText(@".\res\firstToLower.html");
+                bot = File.ReadAllText(@".\res\secondToLower.html");
+            }
             string mid = "";
 
             if(req.ContentBytes != null)
