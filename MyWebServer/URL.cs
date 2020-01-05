@@ -43,7 +43,7 @@ namespace MyWebServer
 
                 List<string> tempSegments = new List<string>();
 
-                if (temp.Length > 1)
+                if (temp.Length > 0)
                 {
                     foreach (string fragment in temp)
                     {
@@ -66,7 +66,7 @@ namespace MyWebServer
                 }
                 else
                 {
-                    this.Segments = new string[1];
+                    this.Segments = new string[0];
                     this.Segments[0] = temp[0];
                 }
 
