@@ -56,7 +56,8 @@ namespace Main
             while (true)
             {
                 Socket s = listener.AcceptSocket();
-                foo(s,pm);
+                Thread t = new Thread(() => foo(s,pm));
+                t.Start();
             }
         }
 
