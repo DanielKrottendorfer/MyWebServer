@@ -32,6 +32,7 @@ namespace MyWebServer
                 cmd.ExecuteNonQuery();
                 warri += 9;
                 temperatureData += negSet;
+                cmd.Dispose();
                 if (temperatureData == 30 || temperatureData == -30)
                 {
                     negSet = negSet * -1;
@@ -57,6 +58,8 @@ namespace MyWebServer
             {
                 negSet = negSet * -1;
             }
+            readerdata.Close();
+            cmddata.Dispose();
             db.Close();
             Main.Program._pool.Release();
             while (true)
@@ -73,6 +76,7 @@ namespace MyWebServer
                 DateTime todayIsInYourHand = DateTime.Now;
                 cmd.Parameters.AddWithValue("q", todayIsInYourHand);
                 cmd.ExecuteNonQuery();
+                cmd.Dispose();
                 db.Close();
                 Main.Program._pool.Release();
                 Thread.Sleep(60000);

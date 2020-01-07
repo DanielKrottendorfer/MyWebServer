@@ -68,7 +68,7 @@ namespace SomePlugin
                         dateTest = dateTest.Split(' ')[0];
                         datepage += dateTest;
                     }
-                    else
+                    else //Wird nie ausgeführt, steht trotzdem drinnen, da sonst IDE meckert
                     {
                         datepage += dateDatePage.ToString();
                         fromDate = dateDatePage;
@@ -77,7 +77,7 @@ namespace SomePlugin
                 }
                 else if (contentArray[0].Split('=')[0] == "datefrom")
                 {
-                    if (!string.IsNullOrEmpty(contentArray[0].Split('=')[1]))
+                    if (!string.IsNullOrEmpty(contentArray[0].Split('=')[1]) && !string.IsNullOrEmpty(contentArray[1].Split('=')[1]))
                     {
                         fromDate = Convert.ToDateTime(contentArray[0].Split('=')[1]);
                         toDate = Convert.ToDateTime(contentArray[1].Split('=')[1]);
@@ -135,9 +135,14 @@ namespace SomePlugin
                     graph += "{ x: new Date( Date.UTC (" + itsTime.Year.ToString() + ", " + firstPart + "," + itsTime.Day.ToString() + "," + secondPart + "," + itsTime.Minute.ToString() + ") ), y: " + reader.GetInt64(1) + ",}, ";
                     //graph = "{ x: shitfuckhead, y: 6,},{ x: penis, y: 2,}, { x: 12.12.2019-18:15:11, y: 5,}, { x: 40, y: 7,},{ x: 50, y: 1,},{ x: 60, y: 5,}, { x: 70, y: 5,},{ x: 80, y: 2,},{ x: 90, y: 2,}";
                 }
+                cmd.Dispose();
+                reader.Close();
                 db.Close();
                 Main.Program._pool.Release();
-                body += File.ReadAllText(graphFirstPartPath) + graph + File.ReadAllText(graphSecondPartPath) + File.ReadAllText(tableFirstPartPath) + table + File.ReadAllText(tableSecondPartPath) + datepage + File.ReadAllText(tableThirdPartPath);
+                body += File.ReadAllText(graphFirstPartPath) + graph + 
+                    File.ReadAllText(graphSecondPartPath) + File.ReadAllText(tableFirstPartPath) 
+                    + table + File.ReadAllText(tableSecondPartPath) + datepage 
+                    + File.ReadAllText(tableThirdPartPath);
 
                 var header = File.ReadAllText(headerPath);
                 body = header + body;
@@ -152,12 +157,12 @@ namespace SomePlugin
 
                 if (urlValue.Length == 5 && arrayChecker(urlValue))
                 {
-                    DateTime fucker;
+                    DateTime getTemperatureDate;
                     Console.WriteLine(urlValue.Length);
                     //necessary, otherwhise date can't be set
                     try
                     {
-                        fucker = Convert.ToDateTime(urlValue[4] + "/" + urlValue[3] + "/" + urlValue[2]);
+                        getTemperatureDate = Convert.ToDateTime(urlValue[4] + "/" + urlValue[3] + "/" + urlValue[2]);
                     }
                     catch(FormatException e)
                     {
@@ -165,7 +170,7 @@ namespace SomePlugin
                         r.SetContent("Invalid Url");
                         return r;
                     }
-                    fucker = Convert.ToDateTime(urlValue[4] + "/" + urlValue[3] + "/" + urlValue[2]);
+                    getTemperatureDate = Convert.ToDateTime(urlValue[4] + "/" + urlValue[3] + "/" + urlValue[2]);
                     var body = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><day>";
 
                     string connstring = "Server =127.0.0.1; Port=5432; User ID=postgres; Password=postgres;Database=postgres;";
@@ -173,7 +178,7 @@ namespace SomePlugin
                     Main.Program._pool.WaitOne();
                     db.Open();
                     NpgsqlCommand cmd = new NpgsqlCommand("Select * from test WHERE date::date = @p", db);
-                    cmd.Parameters.AddWithValue("p", fucker);
+                    cmd.Parameters.AddWithValue("p", getTemperatureDate);
                     try
                     {
                         cmd.Prepare();
@@ -189,6 +194,7 @@ namespace SomePlugin
                     {
                         body += "<value><time>" + reader.GetDateTime(2) + "</time><temperature>" + reader.GetInt64(1) + "</temperature></value>";
                     }
+                    cmd.Dispose();
                     db.Close();
                     Main.Program._pool.Release();
                     body += "</day>";

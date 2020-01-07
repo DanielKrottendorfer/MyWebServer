@@ -41,6 +41,8 @@ namespace ToLowerPlugin
                     temp = temp.Substring(i+1);
 
                 mid = temp;
+                mid = mid.Replace('+',' ');
+                mid = Uri.UnescapeDataString(mid);
             }
 
             r.StatusCode = 200;
