@@ -22,7 +22,6 @@ namespace MyWebServer
             int temperatureData = 20;
             string connstring = "Server=127.0.0.1; Port=5432; User ID=postgres; Password=postgres;Database=postgres;";
             NpgsqlConnection db = new NpgsqlConnection(connstring);
-            Main.Program._pool.WaitOne();
             db.Open();
             for (int x = 0; x < 10000; x++)
             {
@@ -39,14 +38,12 @@ namespace MyWebServer
                 }
             }
             db.Close();
-            Main.Program._pool.Release();
         }
         public void genTemData()
         {
             int tempOne, tempTwo;
             string connstring = "Server=127.0.0.1; Port=5432; User ID=postgres; Password=postgres;Database=postgres;";
             NpgsqlConnection db = new NpgsqlConnection(connstring);
-            Main.Program._pool.WaitOne();
             db.Open();
             NpgsqlCommand cmddata = new NpgsqlCommand("select temp from test ORDER by temp_id Desc Limit 2", db);
             NpgsqlDataReader readerdata = cmddata.ExecuteReader();
@@ -61,7 +58,6 @@ namespace MyWebServer
             readerdata.Close();
             cmddata.Dispose();
             db.Close();
-            Main.Program._pool.Release();
             while (true)
             {
                 tempOne += negSet;
@@ -69,7 +65,6 @@ namespace MyWebServer
                 {
                     negSet = negSet * -1;
                 }
-                Main.Program._pool.WaitOne();
                 db.Open();
                 NpgsqlCommand cmd = new NpgsqlCommand("insert into test(temp, date) values (@p, @q)", db);
                 cmd.Parameters.AddWithValue("p", tempOne);
@@ -78,7 +73,6 @@ namespace MyWebServer
                 cmd.ExecuteNonQuery();
                 cmd.Dispose();
                 db.Close();
-                Main.Program._pool.Release();
                 Thread.Sleep(60000);
             }
         }

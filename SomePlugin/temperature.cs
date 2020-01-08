@@ -107,7 +107,6 @@ namespace SomePlugin
                 var graph = "";
                 string connstring = "Server =127.0.0.1; Port=5432; User ID=postgres; Password=postgres;Database=postgres;";
                 NpgsqlConnection db = new NpgsqlConnection(connstring);
-                Main.Program._pool.WaitOne();
                 db.Open();
                 NpgsqlCommand cmd = new NpgsqlCommand("Select * from test WHERE date::date <= @p and date::date >= @q", db);
                 cmd.Parameters.AddWithValue("q", fromDate);
@@ -138,7 +137,6 @@ namespace SomePlugin
                 cmd.Dispose();
                 reader.Close();
                 db.Close();
-                Main.Program._pool.Release();
                 body += File.ReadAllText(graphFirstPartPath) + graph + 
                     File.ReadAllText(graphSecondPartPath) + File.ReadAllText(tableFirstPartPath) 
                     + table + File.ReadAllText(tableSecondPartPath) + datepage 
@@ -175,7 +173,6 @@ namespace SomePlugin
 
                     string connstring = "Server =127.0.0.1; Port=5432; User ID=postgres; Password=postgres;Database=postgres;";
                     NpgsqlConnection db = new NpgsqlConnection(connstring);
-                    Main.Program._pool.WaitOne();
                     db.Open();
                     NpgsqlCommand cmd = new NpgsqlCommand("Select * from test WHERE date::date = @p", db);
                     cmd.Parameters.AddWithValue("p", getTemperatureDate);
@@ -196,7 +193,6 @@ namespace SomePlugin
                     }
                     cmd.Dispose();
                     db.Close();
-                    Main.Program._pool.Release();
                     body += "</day>";
                     r.SetContent(body);
                     return r;

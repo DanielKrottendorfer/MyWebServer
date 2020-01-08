@@ -15,9 +15,8 @@ using BIF.SWE1.Interfaces;
 
 namespace Main
 {
-    public class Program
+    class Program
 {
-        public static Semaphore _pool;
         public static void foo(Socket s,IPluginManager pm)
         {
             NetworkStream stream = new NetworkStream(s);
@@ -45,8 +44,6 @@ namespace Main
         {
             IPluginManager pm = new PluginManager();
             LoadAll(pm);
-            _pool = new Semaphore(0, 1);
-            _pool.Release(1);
             TcpListener listener = new TcpListener(IPAddress.Any, 8081);
             DbData tester = new DbData();
             tester.tempDataInsert();
