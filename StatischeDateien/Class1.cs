@@ -47,10 +47,7 @@ namespace StatischeDateien
             try
             {
                 mid = File.ReadAllText(".\\"+path);
-                mid = mid.Replace("&", "&amp");
-                mid = mid.Replace("<", "&lt");
-                mid = mid.Replace(">", "&gt");
-                mid = mid.Replace("\n", "<br>");
+                mid = ReplaceSymbols(mid);
             }
             catch(FileNotFoundException e)
             {
@@ -61,6 +58,15 @@ namespace StatischeDateien
             r.SetContent(top + mid + bot);
 
             return r;
+        }
+
+        public static string ReplaceSymbols(string str)
+        {
+            str = str.Replace("&", "&amp");
+            str = str.Replace("<", "&lt");
+            str = str.Replace(">", "&gt");
+            str = str.Replace("\n", "<br>");
+            return str;
         }
     }
     

@@ -41,13 +41,25 @@ namespace ToLowerPlugin
                     temp = temp.Substring(i+1);
 
                 mid = temp;
-                mid = mid.Replace('+',' ');
-                mid = Uri.UnescapeDataString(mid);
+                mid = replacePlus(mid);
+                mid = UrlDecode(mid);
             }
 
             r.StatusCode = 200;
             r.SetContent(top + mid + bot);
             return r;
+        }
+
+        public static string replacePlus(string str)
+        {
+            str = str.Replace('+', ' ');
+            return str;
+        }
+
+        public static string UrlDecode(string str)
+        {
+            str = Uri.UnescapeDataString(str);
+            return str;
         }
     }
 }
