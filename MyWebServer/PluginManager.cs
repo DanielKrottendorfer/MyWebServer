@@ -12,6 +12,10 @@ namespace MyWebServer
 {
     class PluginManager : IPluginManager
     {
+
+        /// <summary>
+        /// List of Plugins and a List of int with hashvalues of the loaded plugins gets initialised.
+        /// </summary>
         public PluginManager()
         {
             _plugins = new List<IPlugin>();
@@ -24,6 +28,10 @@ namespace MyWebServer
 
         private List<int> _loadedPluginHash;
 
+        /// <summary>
+        /// Loads a file with the given name and searches for plgins that implement IPlugin and then calls Add to add the loaded plugin.
+        /// </summary>
+        /// <param name="file"></param>
         public void Load(String file)
         {
             if (!File.Exists(file) || !file.EndsWith(".dll", true, null))
@@ -71,35 +79,9 @@ namespace MyWebServer
             }
         }
 
-        public void LoadAll()
-        {
-            String[] files = Directory.GetFiles("./Plugins/", "*.dll");
-            foreach (var s in files)
-            {
-                string p = Path.Combine(Environment.CurrentDirectory, s);
-                Console.WriteLine(p);
-                Load(p);
-            }
-        }
-
         public void Clear()
         {
             _plugins.Clear();
-        }
-
-        public void PrintPlugins()
-        {
-            Console.WriteLine(this._plugins.Count());
-            foreach(IPlugin p in this._plugins)
-            {
-                try
-                {
-                    Console.WriteLine(p.ToString());
-                }catch(Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
-            }
         }
 
         public void Add(IPlugin plugin)

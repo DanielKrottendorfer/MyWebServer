@@ -16,12 +16,18 @@ using BIF.SWE1.Interfaces;
 namespace Main
 {
     class Program
-{
-        public static void foo(Socket s,IPluginManager pm)
+    {
+        /// <summary>
+        /// Reads data from ClientSocket finds out if there is a plugins loaded that can handle the request and ahndles it.
+        /// </summary>
+        /// <param name="ClientSocket"></param>
+        /// <param name="PluginManager"></param>
+        /// <returns>A score between 0 and 1</returns>
+        public static void HandleRequest(Socket ClientSocket,IPluginManager PluginManager)
         {
-            NetworkStream stream = new NetworkStream(s);
+            NetworkStream stream = new NetworkStream(ClientSocket);
             IRequest r = new Request(stream);
-            foreach(IPlugin p in pm.Plugins)
+            foreach(IPlugin p in PluginManager.Plugins)
             {
                 if(p.CanHandle(r)>0.0f)
                 {
@@ -31,10 +37,13 @@ namespace Main
                 }
             }
 
-            s.Close();
+            ClientSocket.Close();
         }
 
-        public static void tempDatabase()
+        /// <summary>
+        /// 
+        /// </summary>
+        public static void GenerateTempDatabase()
         {
             DbData temper = new DbData();
             temper.genTemData();
@@ -43,27 +52,31 @@ namespace Main
         static void Main(string[] args)
         {
             IPluginManager pm = new PluginManager();
-            LoadAll(pm);
+            LoadAllPlugins(pm);
             TcpListener listener = new TcpListener(IPAddress.Any, 8081);
             DbData tester = new DbData();
             tester.tempDataInsert();
-            Thread dba = new Thread(() => tempDatabase());
+            Thread dba = new Thread(() => GenerateTempDatabase());
             dba.Start();
             listener.Start();
             while (true)
             {
                 Socket s = listener.AcceptSocket();
-                Thread t = new Thread(() => foo(s,pm));
+                Thread t = new Thread(() => HandleRequest(s,pm));
                 t.Start();
             }
         }
 
-        public static void LoadAll(IPluginManager pm)
+        /// <summary>
+        /// Loads all plugins in the ./build/Plugins directory.
+        /// </summary>
+        /// <param name="PluginManager"></param>
+        public static void LoadAllPlugins(IPluginManager PluginManager)
         {
             String[] files = Directory.GetFiles("./Plugins/", "*.dll");
             foreach (var s in files)
             {
-                pm.Add(s.Split('/').Last());
+                PluginManager.Add(s.Split('/').Last());
             }
         }
     }

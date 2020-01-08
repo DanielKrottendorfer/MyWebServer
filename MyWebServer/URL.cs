@@ -84,33 +84,24 @@ namespace MyWebServer
 
         public string[] Segments { get; }
 
-        public string FileName => throw new NotImplementedException();
+        public string FileName { get {
+                    return this.RawUrl.Split('/').Last();
+                } 
+        }
 
-        public string Extension => throw new NotImplementedException();
+        public string Extension {
+            get {
+
+                string filename = this.FileName;
+                string[] temp = filename.Split('.');
+                if (temp.Length > 1)
+                    return "." + temp.Last();
+                return "";
+            }
+        }
 
         public string Fragment { get; }
 
-        override public string ToString()
-        {
-            string s = "";
-            s = s + "RawUrl: " + RawUrl + "\n";
-            s = s + "Fragment: " + Fragment + "\n";
-            s = s + "Path: " + Path + "\n\n";
-            s += "Parameters: \n";
-            foreach (KeyValuePair<string, string> kvp in Parameter)
-            {
-                //textBox3.Text += ("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
-               s += string.Format("Key = {0}, Value = {1} \n", kvp.Key, kvp.Value);
-            }
-            s += "\n";
-            s += "Segments: \n";
-            foreach ( string segmet in Segments)
-            {
-                s += segmet;
-            }
-            s += "\n";
-            return s;
-        }
 
     }
 }
