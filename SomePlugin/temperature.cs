@@ -48,14 +48,12 @@ namespace SomePlugin
                     if (contentArray[0].Split('=')[1] == "back")
                     {
                         string dateTest = contentArray[1].Split('=')[1];
-                        Console.WriteLine(dateTest);
                         dateTest = dateTest.Split('+')[0];
                         toDate = Convert.ToDateTime(dateTest);
                         fromDate = toDate.AddDays(-7);
                         dateTest = fromDate.ToString();
                         dateTest = dateTest.Split(' ')[0];
                         datepage += dateTest;
-                        Console.WriteLine(datepage);
                     }
                     else if (contentArray[0].Split('=')[1] == "forward")
                     {
@@ -151,12 +149,9 @@ namespace SomePlugin
             }
             else if (urlValue[1] == "GetTemperature")
             {
-                Console.WriteLine(req.Method);
-
                 if (urlValue.Length == 5 && arrayChecker(urlValue))
                 {
                     DateTime getTemperatureDate;
-                    Console.WriteLine(urlValue.Length);
                     //necessary, otherwhise date can't be set
                     try
                     {
@@ -209,21 +204,20 @@ namespace SomePlugin
                 return r;
             }
         }
-        public bool arrayChecker(string[] array)
+        public static bool arrayChecker(string[] array)
         {
             bool check = true;
             for (int x = 1; x < array.Length; x++)
             {
                 if (string.IsNullOrEmpty(array[x]))
                 {
-                    Console.WriteLine(array[x]);
                     check = false;
                 }
             }
             return check;
         }
 
-        public string lowerString(string str)
+        public static string lowerString(string str)
         {
             int firstInt = Int32.Parse(str);
             firstInt--;

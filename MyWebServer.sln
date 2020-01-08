@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToLowerPlugin", "ToLowerPlu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StatischeDateien", "StatischeDateien\StatischeDateien.csproj", "{FEEF9664-1157-4054-BFF5-D20C8053A895}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemperatureTests", "TemperatureTests\TemperatureTests.csproj", "{9CDAECF7-6BED-41F4-8AB0-E62CA5E235B0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{FEEF9664-1157-4054-BFF5-D20C8053A895}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FEEF9664-1157-4054-BFF5-D20C8053A895}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FEEF9664-1157-4054-BFF5-D20C8053A895}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CDAECF7-6BED-41F4-8AB0-E62CA5E235B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CDAECF7-6BED-41F4-8AB0-E62CA5E235B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CDAECF7-6BED-41F4-8AB0-E62CA5E235B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CDAECF7-6BED-41F4-8AB0-E62CA5E235B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
