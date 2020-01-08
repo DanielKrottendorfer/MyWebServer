@@ -15,11 +15,14 @@ namespace MyWebServer
         public PluginManager()
         {
             _plugins = new List<IPlugin>();
+            _loadedPluginHash = new List<int>();
         }
 
         private readonly static object syncObj = new object();
         private List<IPlugin> _plugins;
         public IEnumerable<IPlugin> Plugins { get { lock (syncObj) { return _plugins; } } }
+
+        private List<int> _loadedPluginHash;
 
         public void Load(String file)
         {
@@ -59,7 +62,7 @@ namespace MyWebServer
                 {
                     Object o = Activator.CreateInstance(pluginInfo);
                     IPlugin plugin = (IPlugin)o;
-                    _plugins.Add(plugin);
+                    this.Add(plugin);
                 }
             }
             catch (Exception e)
@@ -81,7 +84,7 @@ namespace MyWebServer
 
         public void Clear()
         {
-            throw new NotImplementedException();
+            _plugins.Clear();
         }
 
         public void PrintPlugins()
@@ -101,7 +104,12 @@ namespace MyWebServer
 
         public void Add(IPlugin plugin)
         {
-            _plugins.Add(plugin);
+            int hash = plugin.GetHashCode();
+            if (!_loadedPluginHash.Contains(hash))
+            {
+                _plugins.Add(plugin);
+                _loadedPluginHash.Add(hash);
+            }
         }
 
         public void Add(string plugin)
