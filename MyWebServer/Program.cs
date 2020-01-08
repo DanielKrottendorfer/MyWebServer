@@ -41,7 +41,7 @@ namespace Main
         }
 
         /// <summary>
-        /// 
+        /// Generates temperature data.
         /// </summary>
         public static void GenerateTempDatabase()
         {

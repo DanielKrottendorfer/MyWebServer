@@ -120,7 +120,7 @@ namespace MyWebServer
             sw.Write("\n");
             if (_content != null)
             {
-                sw.Write(this.GetContentString());
+                sw.Write(UTF8Encoding.UTF8.GetString(_content));
             }
             else if (ContentType != null)
             {
@@ -134,10 +134,6 @@ namespace MyWebServer
             {
                 Console.WriteLine(e.Message);
             }
-        }
-        public string GetContentString()
-        {
-            return UTF8Encoding.UTF8.GetString(_content);
         }
 
         private byte[] _content;
