@@ -14,8 +14,8 @@ namespace MyWebServer
     public class DbData
     {
         public int negSet = 1;
-        public int warri = -90000;
-        public DateTime timebois = DateTime.Now;
+        public int pastYears = -90000;
+        public DateTime dateTimeNow = DateTime.Now;
 
         public void tempDataInsert()
         {
@@ -27,9 +27,9 @@ namespace MyWebServer
             {
                 NpgsqlCommand cmd = new NpgsqlCommand("insert into test(temp, date) values (@p, @q)", db);
                 cmd.Parameters.AddWithValue("p", temperatureData);
-                cmd.Parameters.AddWithValue("q", timebois.AddHours(warri));
+                cmd.Parameters.AddWithValue("q", dateTimeNow.AddHours(pastYears));
                 cmd.ExecuteNonQuery();
-                warri += 9;
+                pastYears += 9;
                 temperatureData += negSet;
                 cmd.Dispose();
                 if (temperatureData == 30 || temperatureData == -30)

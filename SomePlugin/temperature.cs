@@ -130,7 +130,7 @@ namespace SomePlugin
                     string secondPart = lowerString(itsTime.Hour.ToString());
                     table += "<tr><th scope=\"row\">" + reader.GetInt64(1) + "</th><td>" + reader.GetDateTime(2) + "</td></tr>";
                     graph += "{ x: new Date( Date.UTC (" + itsTime.Year.ToString() + ", " + firstPart + "," + itsTime.Day.ToString() + "," + secondPart + "," + itsTime.Minute.ToString() + ") ), y: " + reader.GetInt64(1) + ",}, ";
-                    //graph = "{ x: shitfuckhead, y: 6,},{ x: penis, y: 2,}, { x: 12.12.2019-18:15:11, y: 5,}, { x: 40, y: 7,},{ x: 50, y: 1,},{ x: 60, y: 5,}, { x: 70, y: 5,},{ x: 80, y: 2,},{ x: 90, y: 2,}";
+                    //graph = "{ x: date2, y: 6,},{ x: date1, y: 2,}, { x: 12.12.2019-18:15:11, y: 5,}, { x: 40, y: 7,},{ x: 50, y: 1,},{ x: 60, y: 5,}, { x: 70, y: 5,},{ x: 80, y: 2,},{ x: 90, y: 2,}";
                 }
                 cmd.Dispose();
                 reader.Close();
