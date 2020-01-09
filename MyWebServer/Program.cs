@@ -53,7 +53,7 @@ namespace Main
         {
             IPluginManager pm = new PluginManager();
             LoadAllPlugins(pm);
-            TcpListener listener = new TcpListener(IPAddress.Any, 8081);
+            TcpListener listener = new TcpListener(IPAddress.Any, 8080);
             DbData tester = new DbData();
             tester.tempDataInsert();
             Thread dba = new Thread(() => GenerateTempDatabase());

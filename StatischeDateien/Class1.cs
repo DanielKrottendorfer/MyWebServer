@@ -39,8 +39,8 @@ namespace StatischeDateien
             string bot;
             lock (syncObj)
             {
-                top = File.ReadAllText(@".\res\firstToLower.html");
-                bot = File.ReadAllText(@".\res\secondToLower.html");
+                top = File.ReadAllText(@".\res\firstStatischeDatei.html");
+                bot = File.ReadAllText(@".\res\secondStatischeDatei.html");
             }
             string mid = "";
 
